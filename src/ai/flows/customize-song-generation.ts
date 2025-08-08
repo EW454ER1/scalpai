@@ -43,8 +43,8 @@ const textToSpeechFlow = ai.defineFlow(
         speechConfig: {
           voiceConfig: {
             // NOTE: Prebuilt voices are not designated as male/female.
-            // We are just picking two different ones.
-            prebuiltVoiceConfig: { voiceName: input.voice === 'male' ? 'Alloy' : 'Nova' },
+            // We are just picking two different ones from the supported list.
+            prebuiltVoiceConfig: { voiceName: input.voice === 'male' ? 'Algenib' : 'Achernar' },
           },
         },
       },
