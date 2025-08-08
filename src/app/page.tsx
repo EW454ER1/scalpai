@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { ImageGenerator } from '@/components/image-generator';
 import { SongGenerator } from '@/components/song-generator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Music, ImageIcon } from 'lucide-react';
+import { Music, ImageIcon, Send } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12 lg:p-24 bg-background text-foreground">
-      <div className="w-full max-w-4xl mx-auto">
+      <div className="w-full max-w-4xl mx-auto flex flex-col flex-grow">
         <header className="text-center mb-8 md:mb-12">
           <h1 className="font-headline text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             Muse AI
@@ -61,6 +62,19 @@ export default function Home() {
           </TabsContent>
         </Tabs>
       </div>
+      <footer className="w-full max-w-4xl mx-auto mt-12 pt-8 border-t border-border/40 text-center text-muted-foreground">
+          <p className="mb-4">كدعم للموقع، يمكنك الانضمام إلى قناتنا على تليجرام:</p>
+          <a
+              href="https://t.me/gmt_apt"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline">
+                <Send className="mr-2 h-4 w-4" />
+                انضم إلى القناة
+              </Button>
+            </a>
+      </footer>
     </main>
   );
 }
