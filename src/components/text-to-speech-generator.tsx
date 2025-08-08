@@ -87,7 +87,7 @@ export function TextToSpeechGenerator() {
     } catch (error) {
       console.error(error);
       toast({
-        title: 'Error Generating Speech',
+        title: 'حدث خطأ أثناء إنشاء الصوت',
         description: error instanceof Error ? error.message : 'An unknown error occurred.',
         variant: 'destructive',
       });
