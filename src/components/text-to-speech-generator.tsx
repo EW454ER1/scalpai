@@ -36,11 +36,13 @@ const speechFormSchema = z.object({
     message: 'Text cannot be more than 4000 characters long.',
   }),
   voice: z.enum(['male', 'female'], { required_error: 'Please select a voice type.' }),
+  mood: z.enum(['none', 'sad', 'angry', 'comedy', 'romantic'], { required_error: 'Please select a mood.' }),
 });
 
 type SpeechFormValues = z.infer<typeof speechFormSchema>;
 
 const voices = ['male', 'female'];
+const moods = ['none', 'sad', 'angry', 'comedy', 'romantic'];
 
 export function TextToSpeechGenerator() {
   const [generatedSpeech, setGeneratedSpeech] = useState<TextToSpeechOutput | null>(null);
@@ -52,6 +54,7 @@ export function TextToSpeechGenerator() {
     defaultValues: {
       text: '',
       voice: 'female',
+      mood: 'none',
     },
   });
 
@@ -96,33 +99,60 @@ export function TextToSpeechGenerator() {
                 </FormItem>
               )}
             />
-             <FormField
-              control={form.control}
-              name="voice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Voice</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select voice" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {voices.map((v) => (
-                        <SelectItem key={v} value={v} className="capitalize">
-                          {v}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <FormField
+                control={form.control}
+                name="voice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Voice</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select voice" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {voices.map((v) => (
+                          <SelectItem key={v} value={v} className="capitalize">
+                            {v}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="mood"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mood</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a mood" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {moods.map(mood => (
+                          <SelectItem key={mood} value={mood} className="capitalize">
+                            {mood}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
 
             <Button type="submit" disabled={isLoading} className="w-full text-lg py-6">
               {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
