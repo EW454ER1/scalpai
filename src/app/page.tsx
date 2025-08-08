@@ -16,7 +16,8 @@ export default function Home() {
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('scalpking-ai-username');
-    if (!storedUsername) {
+    const storedApiKey = localStorage.getItem('gemini-api-key');
+    if (!storedUsername || !storedApiKey) {
       router.push('/login');
     } else {
       setUsername(storedUsername);

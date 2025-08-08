@@ -6,16 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Send, LogIn, CheckCircle } from 'lucide-react';
+import { Send, LogIn, CheckCircle, KeyRound, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
+  const [apiKey, setApiKey] = useState('');
   const [hasClickedJoin, setHasClickedJoin] = useState(false);
   const [hasConfirmedJoin, setHasConfirmedJoin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    if (localStorage.getItem('scalpking-ai-username')) {
+    if (localStorage.getItem('scalpking-ai-username') && localStorage.getItem('gemini-api-key')) {
       router.push('/');
     }
   }, [router]);
@@ -29,8 +30,9 @@ export default function LoginPage() {
   }
 
   const handleContinue = () => {
-    if (username.trim()) {
+    if (username.trim() && apiKey.trim()) {
       localStorage.setItem('scalpking-ai-username', username);
+      localStorage.setItem('gemini-api-key', apiKey);
       router.push('/');
     }
   };
@@ -43,7 +45,7 @@ export default function LoginPage() {
             Welcome to SCALPKING AI
           </CardTitle>
           <CardDescription className="text-muted-foreground pt-2">
-            الرجاء إدخال اسم مستخدم والانضمام إلى قناة التليجرام للمتابعة.
+            الرجاء إدخال اسم مستخدم ومفتاح API والانضمام إلى قناة التليجرام للمتابعة.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 p-6">
@@ -56,6 +58,29 @@ export default function LoginPage() {
               onChange={(e) => setUsername(e.target.value)}
               className="h-12 text-base"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="apiKey" className="text-lg">Google Gemini API Key</Label>
+            <Input
+              id="apiKey"
+              type="password"
+              placeholder="أدخل مفتاح API الخاص بك"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              className="h-12 text-base"
+            />
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className='pt-2'
+            >
+              <Button variant="link" className="p-0 h-auto">
+                إنشاء مفتاح API جديد
+                <ArrowRight className="mr-2 h-4 w-4" />
+              </Button>
+            </a>
           </div>
           
           {!hasClickedJoin && (
@@ -88,7 +113,7 @@ export default function LoginPage() {
 
           <Button
             onClick={handleContinue}
-            disabled={!username.trim() || !hasConfirmedJoin}
+            disabled={!username.trim() || !apiKey.trim() || !hasConfirmedJoin}
             className="w-full text-lg py-6"
           >
             <LogIn className="mr-2 h-5 w-5" />
