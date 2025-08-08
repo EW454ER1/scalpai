@@ -59,10 +59,14 @@ const generateImagesFlow = ai.defineFlow(
           })
           .then(result => {
             if (!result.media?.url) {
-              console.error('Image generation failed for one image. Using placeholder.');
+              console.error('Image generation failed, no media object returned. Using placeholder.');
               return 'https://placehold.co/512x512.png';
             }
             return result.media.url;
+          })
+          .catch(err => {
+            console.error('Image generation failed with an error:', err);
+            return 'https://placehold.co/512x512.png';
           })
       );
     }
