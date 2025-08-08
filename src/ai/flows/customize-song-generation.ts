@@ -16,6 +16,7 @@ const TextToSpeechInputSchema = z.object({
   text: z.string().describe('The text to convert to speech.'),
   voice: z.enum(['male', 'female']).describe('The type of voice for the speech (male or female).'),
   mood: z.enum(['none', 'sad', 'angry', 'comedy', 'romantic']).describe('The desired mood for the speech.'),
+  dialect: z.enum(['egyptian', 'tunisian', 'saudi', 'kuwaiti', 'lebanese', 'libyan']).describe('The Arabic dialect for the speech.'),
 });
 export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
 
@@ -37,11 +38,12 @@ const textToSpeechFlow = ai.defineFlow(
     outputSchema: TextToSpeechOutputSchema,
   },
   async (input) => {
-    // Construct the prompt with mood instructions if a mood is selected.
-    const prompt =
-      input.mood && input.mood !== 'none'
-        ? `(speaking in a ${input.mood} tone) ${input.text}`
-        : input.text;
+    // Construct the prompt with mood and dialect instructions.
+    let prompt = `(speaking in a ${input.dialect} Arabic dialect) ${input.text}`;
+    if (input.mood && input.mood !== 'none') {
+        prompt = `(speaking in a ${input.mood} tone, in the ${input.dialect} Arabic dialect) ${input.text}`;
+    }
+
 
     const { media } = await ai.generate({
       model: 'googleai/gemini-2.5-flash-preview-tts',
