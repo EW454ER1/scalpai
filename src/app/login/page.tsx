@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Send, LogIn, CheckCircle, KeyRound, ArrowLeft } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -14,12 +15,27 @@ export default function LoginPage() {
   const [hasClickedJoin, setHasClickedJoin] = useState(false);
   const [hasConfirmedJoin, setHasConfirmedJoin] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (localStorage.getItem('scalpking-ai-username') && localStorage.getItem('gemini-api-key')) {
       router.push('/');
     }
   }, [router]);
+
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      // You can store the referral information here.
+      // For now, we just show a toast message.
+      toast({
+        title: 'أهلاً بك!',
+        description: `لقد تمت إحالتك بواسطة ${ref}.`,
+      });
+      localStorage.setItem('referral', ref);
+    }
+  }, [searchParams, toast]);
 
   const handleJoinClick = () => {
     setHasClickedJoin(true);
@@ -124,3 +140,5 @@ export default function LoginPage() {
     </main>
   );
 }
+
+    

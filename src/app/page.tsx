@@ -57,9 +57,10 @@ export default function Home() {
   }
 
   const handleShare = () => {
-    // In a real app, you would generate a unique referral link for the user.
-    const shareLink = window.location.origin;
-    copyToClipboard(shareLink, `تم نسخ رابط المشاركة. ستحصل على $${referralBonus.toFixed(2)} عن كل صديق يسجل وينضم للقناة!`);
+    if (username) {
+      const referralLink = `${window.location.origin}/login?ref=${username}`;
+      copyToClipboard(referralLink, `تم نسخ رابط الإحالة. ستحصل على $${referralBonus.toFixed(2)} عن كل صديق يسجل وينضم للقناة!`);
+    }
   }
 
   const handleWithdrawClick = () => {
@@ -277,3 +278,5 @@ export default function Home() {
     </main>
   );
 }
+
+    
