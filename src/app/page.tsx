@@ -5,14 +5,29 @@ import { useRouter } from 'next/navigation';
 import { ImageGenerator } from '@/components/image-generator';
 import { TextToSpeechGenerator } from '@/components/text-to-speech-generator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Music, ImageIcon, Send, Speech } from 'lucide-react';
+import { ImageIcon, Send, Speech, Gift, Copy } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 export default function Home() {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
+  const { toast } = useToast();
+  const walletAddress = 'TDKeWZ7NZaEkQEVvvSKrdrMhC5V8P8b9cW';
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('scalpking-ai-username');
@@ -24,6 +39,14 @@ export default function Home() {
     }
     setIsClient(true);
   }, [router]);
+  
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(walletAddress);
+    toast({
+      title: 'تم النسخ!',
+      description: 'تم نسخ عنوان المحفظة إلى الحافظة.',
+    });
+  }
 
   if (!isClient || !username) {
     return (
@@ -69,17 +92,55 @@ export default function Home() {
         </Tabs>
       </div>
       <footer className="w-full max-w-4xl mx-auto mt-12 pt-8 border-t border-border/40 text-center text-muted-foreground">
-          <p className="mb-4">كدعم للموقع، يمكنك الانضمام إلى قناتنا على تليجرام:</p>
-          <a
-              href="https://t.me/gmt_apt"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline">
-                <Send className="mr-2 h-4 w-4" />
-                انضم إلى القناة
-              </Button>
+          <p className="mb-4">كدعم للموقع، يمكنك الانضمام إلى قناتنا على تليجرام أو إرسال هدية:</p>
+          <div className="flex justify-center items-center gap-4">
+            <a
+                href="https://t.me/gmt_apt"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline">
+                  <Send className="mr-2 h-4 w-4" />
+                  انضم إلى القناة
+                </Button>
             </a>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">
+                  <Gift className="mr-2 h-4 w-4" />
+                  إرسال هدية للمطور
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-center text-2xl">دعم المطور</AlertDialogTitle>
+                  <AlertDialogDescription className="text-center">
+                    يمكنك دعم المطور عن طريق إرسال هدية إلى عنوان المحفظة أدناه.
+                    <br/>
+                    TRC20 USDT
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="flex flex-col items-center justify-center space-y-4">
+                  <div className="p-4 bg-muted rounded-lg">
+                     {/* You can place your QR code image here. For now, it's a placeholder. */}
+                     <div className="w-48 h-48 bg-gray-300 flex items-center justify-center rounded-md">
+                        <p className="text-sm text-gray-500">QR Code Placeholder</p>
+                     </div>
+                  </div>
+                  <div className="p-3 bg-muted rounded-md text-center break-all text-sm font-mono">
+                    {walletAddress}
+                  </div>
+                   <Button onClick={copyToClipboard} variant="secondary" className="w-full">
+                      <Copy className="mr-2 h-4 w-4" />
+                      نسخ العنوان
+                    </Button>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>إغلاق</AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
       </footer>
     </main>
   );
