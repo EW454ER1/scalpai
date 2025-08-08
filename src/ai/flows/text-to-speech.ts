@@ -9,12 +9,13 @@
  */
 
 import {ai} from '@/ai/genkit';
+import {googleAI} from '@genkit-ai/googleai';
 import {z} from 'genkit';
 import wav from 'wav';
 
 const TextToSpeechInputSchema = z.object({
   text: z.string().describe('The text to convert to speech.'),
-  voice: z.enum(['male', 'female']).describe('The type of voice for the speech (male or female).'),
+  voice: z.enum(['Algenib', 'Achernar']).describe('The type of voice for the speech.'),
   mood: z.enum(['none', 'sad', 'angry', 'comedy', 'romantic']).describe('The desired mood for the speech.'),
   dialect: z.enum(['egyptian', 'tunisian', 'saudi', 'kuwaiti', 'lebanese', 'libyan']).describe('The Arabic dialect for the speech.'),
 });
@@ -44,24 +45,23 @@ const textToSpeechFlow = ai.defineFlow(
         prompt = `(speaking in a ${input.mood} tone, in the ${input.dialect} Arabic dialect) ${input.text}`;
     }
 
-
     const { media } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-preview-tts',
+      model: googleAI.model('gemini-2.5-flash-preview-tts'),
       config: {
         responseModalities: ['AUDIO'],
         speechConfig: {
           voiceConfig: {
-            // NOTE: Prebuilt voices are not designated as male/female.
-            // We are just picking two different ones from the supported list.
-            prebuiltVoiceConfig: { voiceName: input.voice === 'male' ? 'Algenib' : 'Achernar' },
+            prebuiltVoiceConfig: { voiceName: input.voice },
           },
         },
       },
       prompt: prompt,
     });
+
     if (!media) {
       throw new Error('no media returned');
     }
+
     const audioBuffer = Buffer.from(
       media.url.substring(media.url.indexOf(',') + 1),
       'base64'

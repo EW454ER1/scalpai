@@ -26,7 +26,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { textToSpeech, TextToSpeechInput, TextToSpeechOutput } from '@/ai/flows/customize-song-generation';
+import { textToSpeech, TextToSpeechInput, TextToSpeechOutput } from '@/ai/flows/text-to-speech';
 import { Loader2 } from 'lucide-react';
 
 const speechFormSchema = z.object({
@@ -35,15 +35,24 @@ const speechFormSchema = z.object({
   }).max(4000, {
     message: 'Text cannot be more than 4000 characters long.',
   }),
-  voice: z.enum(['male', 'female'], { required_error: 'Please select a voice type.' }),
+  voice: z.enum(['Algenib', 'Achernar'], { required_error: 'Please select a voice type.' }),
   mood: z.enum(['none', 'sad', 'angry', 'comedy', 'romantic'], { required_error: 'Please select a mood.' }),
   dialect: z.enum(['egyptian', 'tunisian', 'saudi', 'kuwaiti', 'lebanese', 'libyan'], { required_error: 'Please select a dialect.' }),
 });
 
 type SpeechFormValues = z.infer<typeof speechFormSchema>;
 
-const voices = ['male', 'female'];
-const moods = ['none', 'sad', 'angry', 'comedy', 'romantic'];
+const voices = [
+    { value: 'Achernar', label: 'أنثى' },
+    { value: 'Algenib', label: 'ذكر' },
+];
+const moods = [
+    { value: 'none', label: 'عادي' },
+    { value: 'sad', label: 'حزين' },
+    { value: 'angry', label: 'غاضب' },
+    { value: 'comedy', label: 'كوميدي' },
+    { value: 'romantic', label: 'رومانسي' },
+];
 const dialects = [
     { value: 'egyptian', label: 'مصرية' },
     { value: 'tunisian', label: 'تونسية' },
@@ -63,7 +72,7 @@ export function TextToSpeechGenerator() {
     resolver: zodResolver(speechFormSchema),
     defaultValues: {
       text: '',
-      voice: 'female',
+      voice: 'Achernar',
       mood: 'none',
       dialect: 'egyptian',
     },
@@ -128,8 +137,8 @@ export function TextToSpeechGenerator() {
                       </FormControl>
                       <SelectContent>
                         {voices.map((v) => (
-                          <SelectItem key={v} value={v} className="capitalize">
-                            {v === 'male' ? 'ذكر' : 'أنثى'}
+                          <SelectItem key={v.value} value={v.value} className="capitalize">
+                            {v.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -152,8 +161,8 @@ export function TextToSpeechGenerator() {
                       </FormControl>
                       <SelectContent>
                         {moods.map(mood => (
-                          <SelectItem key={mood} value={mood} className="capitalize">
-                            {mood === 'none' ? 'عادي' : mood}
+                          <SelectItem key={mood.value} value={mood.value} className="capitalize">
+                            {mood.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
