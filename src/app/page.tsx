@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageIcon, Send, Speech, Gift, Copy, Share2, Upload, Download } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -102,9 +103,13 @@ export default function Home() {
                             </AlertDialogHeader>
                             <div className="flex flex-col items-center justify-center space-y-4">
                             <div className="p-4 bg-muted rounded-lg">
-                                <div className="w-48 h-48 bg-gray-300 flex items-center justify-center rounded-md">
-                                    <p className="text-sm text-gray-500">QR Code Placeholder</p>
-                                </div>
+                                <Image 
+                                  src="/qr-code.png"
+                                  alt="QR Code for wallet address"
+                                  width={192}
+                                  height={192}
+                                  className="rounded-md"
+                                />
                             </div>
                             <div className="p-3 bg-muted rounded-md text-center break-all text-sm font-mono">
                                 {walletAddress}
@@ -199,9 +204,13 @@ export default function Home() {
                 </AlertDialogHeader>
                 <div className="flex flex-col items-center justify-center space-y-4">
                   <div className="p-4 bg-muted rounded-lg">
-                     <div className="w-48 h-48 bg-gray-300 flex items-center justify-center rounded-md">
-                        <p className="text-sm text-gray-500">QR Code Placeholder</p>
-                     </div>
+                     <Image 
+                        src="/qr-code.png"
+                        alt="QR Code for wallet address"
+                        width={192}
+                        height={192}
+                        className="rounded-md"
+                     />
                   </div>
                   <div className="p-3 bg-muted rounded-md text-center break-all text-sm font-mono">
                     {walletAddress}
