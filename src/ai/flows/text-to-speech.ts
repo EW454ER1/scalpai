@@ -45,30 +45,38 @@ const textToSpeechFlow = ai.defineFlow(
         prompt = `(speaking in a ${input.mood} tone, in the ${input.dialect} Arabic dialect) ${input.text}`;
     }
 
-    const { media } = await ai.generate({
-      model: googleAI.model('gemini-2.5-flash-preview-tts'),
-      config: {
-        responseModalities: ['AUDIO'],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: input.voice },
+    try {
+      const { media } = await ai.generate({
+        model: googleAI.model('gemini-2.5-flash-preview-tts'),
+        config: {
+          responseModalities: ['AUDIO'],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName: input.voice },
+            },
           },
         },
-      },
-      prompt: prompt,
-    });
+        prompt: prompt,
+      });
 
-    if (!media) {
-      throw new Error('no media returned');
+      if (!media) {
+        throw new Error('no media returned');
+      }
+
+      const audioBuffer = Buffer.from(
+        media.url.substring(media.url.indexOf(',') + 1),
+        'base64'
+      );
+      const wavData = await toWav(audioBuffer);
+      const audioUrl = 'data:audio/wav;base64,' + wavData;
+      return { audioUrl };
+    } catch (error: any) {
+        console.error('Error during TTS generation:', error);
+        if (error.message && (error.message.includes('429') || error.message.includes('quota'))) {
+            throw new Error('لقد تجاوزت الحصة المتاحة. يرجى المحاولة مرة أخرى لاحقًا.');
+        }
+        throw new Error('حدث خطأ غير متوقع أثناء إنشاء المقطع الصوتي.');
     }
-
-    const audioBuffer = Buffer.from(
-      media.url.substring(media.url.indexOf(',') + 1),
-      'base64'
-    );
-    const wavData = await toWav(audioBuffer);
-    const audioUrl = 'data:audio/wav;base64,' + wavData;
-    return { audioUrl };
   }
 );
 
