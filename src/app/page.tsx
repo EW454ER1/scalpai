@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -21,6 +22,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function Home() {
   const router = useRouter();
@@ -30,6 +33,7 @@ export default function Home() {
   const walletAddress = 'TDKeWZ7NZaEkQEVvvSKrdrMhC5V8P8b9cW';
   const referralBonus = 0.50;
   const minWithdrawal = 100;
+  const withdrawalFee = 0.05; // 5%
   // This is a placeholder for the user's balance. A real backend is needed for this.
   const [balance, setBalance] = useState(0.00); 
 
@@ -57,6 +61,16 @@ export default function Home() {
     const shareLink = window.location.origin;
     copyToClipboard(shareLink, `تم نسخ رابط المشاركة. ستحصل على $${referralBonus.toFixed(2)} عن كل صديق يسجل وينضم للقناة!`);
   }
+
+  const handleWithdrawClick = () => {
+    if (balance < minWithdrawal) {
+      toast({
+        title: 'الرصيد غير كافٍ',
+        description: `يجب أن يصل رصيدك إلى ${minWithdrawal}$ على الأقل لتتمكن من السحب.`,
+        variant: 'destructive',
+      });
+    }
+  };
 
   if (!isClient || !username) {
     return (
@@ -109,6 +123,7 @@ export default function Home() {
                                   width={192}
                                   height={192}
                                   className="rounded-md"
+                                  data-ai-hint="qr code"
                                 />
                             </div>
                             <div className="p-3 bg-muted rounded-md text-center break-all text-sm font-mono">
@@ -134,14 +149,45 @@ export default function Home() {
                         <p className="text-xs text-muted-foreground">رصيدك الحالي</p>
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto">
-                         <Button
-                            onClick={() => toast({ title: 'قيد الإنشاء', description: 'يجب أن يصل رصيدك إلى 100$ لتتمكن من السحب.', variant: 'destructive' })}
-                            disabled={balance < minWithdrawal}
-                            className="flex-1"
-                        >
-                            <Download className="mr-2 h-4 w-4" />
-                            سحب
-                        </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    onClick={handleWithdrawClick}
+                                    disabled={balance < minWithdrawal}
+                                    className="flex-1"
+                                >
+                                    <Download className="mr-2 h-4 w-4" />
+                                    سحب
+                                </Button>
+                            </AlertDialogTrigger>
+                            {balance >= minWithdrawal && (
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>طلب سحب</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            أدخل عنوان محفظة TRC20 والمبلغ الذي تود سحبه. سيتم خصم رسوم بنسبة {(withdrawalFee * 100)}%.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="walletAddress">عنوان المحفظة (TRC20)</Label>
+                                            <Input id="walletAddress" placeholder="أدخل عنوان محفظتك" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="amount">المبلغ ($)</Label>
+                                            <Input id="amount" type="number" placeholder={`الحد الأدنى ${minWithdrawal}$`} />
+                                        </div>
+                                    </div>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => toast({ title: 'قيد الإنشاء', description: 'سيتم تفعيل هذه الميزة قريباً.', variant: 'destructive'})}>
+                                            تأكيد السحب
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            )}
+                        </AlertDialog>
+
                         <div className='sm:hidden flex-1'>
                              <Button variant="outline" onClick={handleShare} className='w-full'>
                                 <Share2 className="mr-2 h-4 w-4" />
@@ -210,6 +256,7 @@ export default function Home() {
                         width={192}
                         height={192}
                         className="rounded-md"
+                        data-ai-hint="qr code"
                      />
                   </div>
                   <div className="p-3 bg-muted rounded-md text-center break-all text-sm font-mono">
