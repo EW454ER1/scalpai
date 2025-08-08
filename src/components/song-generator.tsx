@@ -68,30 +68,14 @@ export function SongGenerator() {
     setIsLoading(true);
     setGeneratedSong(null);
     try {
-      let result = await customizeSongGeneration(data as CustomizeSongGenerationInput);
-
-      if (!result.songUrl || !result.songUrl.startsWith('http')) {
-        toast({
-          title: "Demo Mode",
-          description: "The AI is composing your song! As this is a demo, you'll hear a placeholder tune. The full feature is coming soon.",
-        });
-        result = {
-          songUrl: 'https://storage.googleapis.com/studioprompt/placeholder.mp3',
-          coverImageUrl: `https://placehold.co/400x400.png`
-        };
-      }
+      const result = await customizeSongGeneration(data as CustomizeSongGenerationInput);
       setGeneratedSong(result);
-
     } catch (error) {
       console.error(error);
       toast({
         title: 'Error Generating Song',
-        description: 'An unexpected error occurred. Please enjoy this placeholder song while we resolve the issue.',
+        description: 'An unexpected error occurred. Please try again.',
         variant: 'destructive',
-      });
-      setGeneratedSong({
-        songUrl: 'https://storage.googleapis.com/studioprompt/placeholder.mp3',
-        coverImageUrl: `https://placehold.co/400x400.png`
       });
     } finally {
       setIsLoading(false);

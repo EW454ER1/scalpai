@@ -10,6 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import wav from 'wav';
 
 const CustomizeSongGenerationInputSchema = z.object({
   lyrics: z.string().describe('The lyrics of the song to generate.'),
@@ -32,21 +33,65 @@ export async function customizeSongGeneration(
   return customizeSongGenerationFlow(input);
 }
 
-const generateSongPrompt = ai.definePrompt({
-  name: 'generateSongPrompt',
-  input: {schema: CustomizeSongGenerationInputSchema},
-  output: {schema: CustomizeSongGenerationOutputSchema},
-  prompt: `You are an AI music generator. Generate a song based on the following input:
+const textToSpeechFlow = ai.defineFlow(
+  {
+    name: 'textToSpeechFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (lyrics) => {
+    const { media } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash-preview-tts',
+      config: {
+        responseModalities: ['AUDIO'],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName: 'Algenib' },
+          },
+        },
+      },
+      prompt: lyrics,
+    });
+    if (!media) {
+      throw new Error('no media returned');
+    }
+    const audioBuffer = Buffer.from(
+      media.url.substring(media.url.indexOf(',') + 1),
+      'base64'
+    );
+    const wavData = await toWav(audioBuffer);
+    return 'data:audio/wav;base64,' + wavData;
+  }
+);
 
-Lyrics: {{{lyrics}}}
-Voice Type: {{{voiceType}}}
-Language: {{{language}}}
-Song Type: {{{songType}}}
-Music Style: {{{musicStyle}}}
 
-Ensure the song is complete and downloadable in .mp3 format. Also, generate a cover image URL for the song.
-`,
-});
+async function toWav(
+  pcmData: Buffer,
+  channels = 1,
+  rate = 24000,
+  sampleWidth = 2
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const writer = new wav.Writer({
+      channels,
+      sampleRate: rate,
+      bitDepth: sampleWidth * 8,
+    });
+
+    let bufs = [] as any[];
+    writer.on('error', reject);
+    writer.on('data', function (d) {
+      bufs.push(d);
+    });
+    writer.on('end', function () {
+      resolve(Buffer.concat(bufs).toString('base64'));
+    });
+
+    writer.write(pcmData);
+    writer.end();
+  });
+}
+
 
 const customizeSongGenerationFlow = ai.defineFlow(
   {
@@ -54,8 +99,21 @@ const customizeSongGenerationFlow = ai.defineFlow(
     inputSchema: CustomizeSongGenerationInputSchema,
     outputSchema: CustomizeSongGenerationOutputSchema,
   },
-  async input => {
-    const {output} = await generateSongPrompt(input);
-    return output!;
+  async (input) => {
+    // Generate song and image in parallel
+    const [songUrl, imageResult] = await Promise.all([
+      textToSpeechFlow(input.lyrics),
+      ai.generate({
+        model: 'googleai/gemini-2.0-flash-preview-image-generation',
+        prompt: `Create a song cover for a ${input.songType} song with a ${input.musicStyle} style. The lyrics are: ${input.lyrics}`,
+        config: {
+          responseModalities: ['TEXT', 'IMAGE'],
+        },
+      }),
+    ]);
+
+    const coverImageUrl = imageResult.media?.url ?? 'https://placehold.co/400x400.png';
+
+    return { songUrl, coverImageUrl };
   }
 );
