@@ -17,7 +17,7 @@ const GenerateImagesInputSchema = z.object({
   style: z
     .string()
     .describe(
-      'The style of the image (e.g., cartoon, realistic, 3D, sci-fi, artistic).'  
+      'The style of the image (e.g., cartoon, realistic, 3D, sci-fi, artistic).'
     )
     .optional(),
 });
@@ -52,14 +52,15 @@ const generateImagesFlow = ai.defineFlow(
         ai
           .generate({
             model: 'googleai/gemini-2.0-flash-preview-image-generation',
-            prompt: input.prompt,
+            prompt: `Style: ${input.style}. Prompt: ${input.prompt}`,
             config: {
               responseModalities: ['TEXT', 'IMAGE'],
             },
           })
           .then(result => {
             if (!result.media?.url) {
-              throw new Error('No image was generated.  Check your prompt and try again.');
+              console.error('Image generation failed for one image. Using placeholder.');
+              return 'https://placehold.co/512x512.png';
             }
             return result.media.url;
           })
