@@ -26,7 +26,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { textToSpeech, TextToSpeechInput, TextToSpeechOutput } from '@/ai/flows/text-to-speech';
+import { textToSpeech, TextToSpeechInput, TextToSpeechOutput } from '@/ai/flows/customize-song-generation';
 import { Loader2 } from 'lucide-react';
 
 const speechFormSchema = z.object({

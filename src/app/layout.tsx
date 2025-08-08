@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'SCALPKING AI',
-  description: 'Generate images and songs with AI',
+  description: 'Generate images and speech with AI',
 };
 
 export default function RootLayout({

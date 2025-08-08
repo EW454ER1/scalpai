@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageGenerator } from '@/components/image-generator';
-import { SongGenerator } from '@/components/song-generator';
+import { TextToSpeechGenerator } from '@/components/text-to-speech-generator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Music, ImageIcon, Send } from 'lucide-react';
+import { Music, ImageIcon, Send, Speech } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 
@@ -45,7 +45,7 @@ export default function Home() {
             SCALPKING AI
           </h1>
           <p className="mt-2 text-lg sm:text-xl text-muted-foreground">
-            Unleash your creativity with AI-powered image and song generation.
+            Unleash your creativity with AI-powered image and speech generation.
           </p>
         </header>
 
@@ -55,16 +55,16 @@ export default function Home() {
               <ImageIcon className="mr-2 h-5 w-5" />
               Image Generation
             </TabsTrigger>
-            <TabsTrigger value="song" className="text-base">
-              <Music className="mr-2 h-5 w-5" />
-              Song Generation
+            <TabsTrigger value="speech" className="text-base">
+              <Speech className="mr-2 h-5 w-5" />
+              Text to Speech
             </TabsTrigger>
           </TabsList>
           <TabsContent value="image" className="mt-6">
             <ImageGenerator />
           </TabsContent>
-          <TabsContent value="song" className="mt-6">
-            <SongGenerator />
+          <TabsContent value="speech" className="mt-6">
+            <TextToSpeechGenerator />
           </TabsContent>
         </Tabs>
       </div>
