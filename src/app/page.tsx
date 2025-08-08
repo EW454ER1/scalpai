@@ -5,13 +5,11 @@ import { useRouter } from 'next/navigation';
 import { ImageGenerator } from '@/components/image-generator';
 import { TextToSpeechGenerator } from '@/components/text-to-speech-generator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ImageIcon, Send, Speech, Gift, Copy } from 'lucide-react';
+import { ImageIcon, Send, Speech, Gift, Copy, Share2, Upload, Download } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -20,7 +18,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
-import Image from 'next/image';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Home() {
   const router = useRouter();
@@ -28,6 +26,10 @@ export default function Home() {
   const [username, setUsername] = useState<string | null>(null);
   const { toast } = useToast();
   const walletAddress = 'TDKeWZ7NZaEkQEVvvSKrdrMhC5V8P8b9cW';
+  const referralBonus = 0.50;
+  const minWithdrawal = 100;
+  // This is a placeholder for the user's balance. A real backend is needed for this.
+  const [balance, setBalance] = useState(0.00); 
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('scalpking-ai-username');
@@ -40,12 +42,18 @@ export default function Home() {
     setIsClient(true);
   }, [router]);
   
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(walletAddress);
+  const copyToClipboard = (textToCopy: string, toastMessage: string) => {
+    navigator.clipboard.writeText(textToCopy);
     toast({
       title: 'تم النسخ!',
-      description: 'تم نسخ عنوان المحفظة إلى الحافظة.',
+      description: toastMessage,
     });
+  }
+
+  const handleShare = () => {
+    // In a real app, you would generate a unique referral link for the user.
+    const shareLink = window.location.origin;
+    copyToClipboard(shareLink, `تم نسخ رابط المشاركة. ستحصل على $${referralBonus.toFixed(2)} عن كل صديق يسجل وينضم للقناة!`);
   }
 
   if (!isClient || !username) {
@@ -63,14 +71,82 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12 lg:p-24 bg-background text-foreground">
       <div className="w-full max-w-4xl mx-auto flex flex-col flex-grow">
-        <header className="text-center mb-8 md:mb-12">
-          <h1 className="font-headline text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            SCALPKING AI
-          </h1>
-          <p className="mt-2 text-lg sm:text-xl text-muted-foreground">
-            Unleash your creativity with AI-powered image and speech generation.
-          </p>
+        <header className="w-full mb-8 md:mb-12">
+            <div className="flex justify-between items-center mb-4">
+                 <h1 className="font-headline text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    SCALPKING AI
+                 </h1>
+                 <div className='hidden sm:flex items-center gap-2'>
+                    <Button variant="outline" onClick={handleShare}>
+                        <Share2 className="mr-2 h-4 w-4" />
+                        مشاركة
+                    </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="outline">
+                                <Upload className="mr-2 h-4 w-4" />
+                                إيداع
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle className="text-center text-2xl">دعم المطور</AlertDialogTitle>
+                            <AlertDialogDescription className="text-center">
+                                يمكنك دعم المطور عن طريق إرسال هدية إلى عنوان المحفظة أدناه.
+                                <br/>
+                                هذا الدعم يساعد في تطوير الموقع ليصبح أقوى وأكثر احترافية.
+                                <br/>
+                                TRC20 USDT
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <div className="flex flex-col items-center justify-center space-y-4">
+                            <div className="p-4 bg-muted rounded-lg">
+                                <div className="w-48 h-48 bg-gray-300 flex items-center justify-center rounded-md">
+                                    <p className="text-sm text-gray-500">QR Code Placeholder</p>
+                                </div>
+                            </div>
+                            <div className="p-3 bg-muted rounded-md text-center break-all text-sm font-mono">
+                                {walletAddress}
+                            </div>
+                            <Button onClick={() => copyToClipboard(walletAddress, 'تم نسخ عنوان المحفظة إلى الحافظة.')} variant="secondary" className="w-full">
+                                <Copy className="mr-2 h-4 w-4" />
+                                نسخ العنوان
+                                </Button>
+                            </div>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>إغلاق</AlertDialogCancel>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                 </div>
+            </div>
+            <Card className="bg-card/50">
+                <CardContent className="p-4 flex flex-wrap items-center justify-between gap-4">
+                    <div className='text-center sm:text-left'>
+                        <p className="text-muted-foreground">أهلاً بك، {username}!</p>
+                        <p className="text-2xl font-bold">${balance.toFixed(2)}</p>
+                        <p className="text-xs text-muted-foreground">رصيدك الحالي</p>
+                    </div>
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                         <Button
+                            onClick={() => toast({ title: 'قيد الإنشاء', description: 'يجب أن يصل رصيدك إلى 100$ لتتمكن من السحب.', variant: 'destructive' })}
+                            disabled={balance < minWithdrawal}
+                            className="flex-1"
+                        >
+                            <Download className="mr-2 h-4 w-4" />
+                            سحب
+                        </Button>
+                        <div className='sm:hidden flex-1'>
+                             <Button variant="outline" onClick={handleShare} className='w-full'>
+                                <Share2 className="mr-2 h-4 w-4" />
+                                مشاركة
+                            </Button>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
         </header>
+
 
         <Tabs defaultValue="image" className="w-full">
           <TabsList className="grid w-full grid-cols-2 h-12">
@@ -122,7 +198,6 @@ export default function Home() {
                 </AlertDialogHeader>
                 <div className="flex flex-col items-center justify-center space-y-4">
                   <div className="p-4 bg-muted rounded-lg">
-                     {/* You can place your QR code image here. For now, it's a placeholder. */}
                      <div className="w-48 h-48 bg-gray-300 flex items-center justify-center rounded-md">
                         <p className="text-sm text-gray-500">QR Code Placeholder</p>
                      </div>
@@ -130,7 +205,7 @@ export default function Home() {
                   <div className="p-3 bg-muted rounded-md text-center break-all text-sm font-mono">
                     {walletAddress}
                   </div>
-                   <Button onClick={copyToClipboard} variant="secondary" className="w-full">
+                   <Button onClick={() => copyToClipboard(walletAddress, 'تم نسخ عنوان المحفظة إلى الحافظة.')} variant="secondary" className="w-full">
                       <Copy className="mr-2 h-4 w-4" />
                       نسخ العنوان
                     </Button>

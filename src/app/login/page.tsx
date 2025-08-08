@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Send, LogIn, CheckCircle, KeyRound, ArrowRight } from 'lucide-react';
+import { Send, LogIn, CheckCircle, KeyRound, ArrowLeft } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -42,7 +42,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold font-headline bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Welcome to SCALPKING AI
+            أهلاً بك في SCALPKING AI
           </CardTitle>
           <CardDescription className="text-muted-foreground pt-2">
             الرجاء إدخال اسم مستخدم ومفتاح API والانضمام إلى قناة التليجرام للمتابعة.
@@ -78,7 +78,7 @@ export default function LoginPage() {
             >
               <Button variant="link" className="p-0 h-auto">
                 إنشاء مفتاح API جديد
-                <ArrowRight className="mr-2 h-4 w-4" />
+                <ArrowLeft className="ml-2 h-4 w-4" />
               </Button>
             </a>
           </div>
