@@ -74,7 +74,7 @@ export function SongGenerator() {
       console.error(error);
       toast({
         title: 'Error Generating Song',
-        description: 'An unexpected error occurred. Please try again.',
+        description: error instanceof Error ? error.message : 'An unknown error occurred.',
         variant: 'destructive',
       });
     } finally {
