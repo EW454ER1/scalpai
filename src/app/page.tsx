@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageGenerator } from '@/components/image-generator';
 import { SongGenerator } from '@/components/song-generator';
@@ -11,15 +11,20 @@ import { Button } from '@/components/ui/button';
 
 export default function Home() {
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    const username = localStorage.getItem('scalpking-ai-username');
-    if (!username) {
+    const storedUsername = localStorage.getItem('scalpking-ai-username');
+    if (!storedUsername) {
       router.push('/login');
+    } else {
+      setUsername(storedUsername);
     }
+    setIsClient(true);
   }, [router]);
-  
-  if (typeof window !== 'undefined' && !localStorage.getItem('scalpking-ai-username')) {
+
+  if (!isClient || !username) {
     return (
         <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12 lg:p-24 bg-background text-foreground">
             <div className="w-full max-w-4xl mx-auto space-y-8">
