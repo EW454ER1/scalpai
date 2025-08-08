@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Muse AI',
+  title: 'SCALPKING AI',
   description: 'Generate images and songs with AI',
 };
 

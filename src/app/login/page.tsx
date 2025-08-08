@@ -15,7 +15,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (localStorage.getItem('muse-ai-username')) {
+    if (localStorage.getItem('scalpking-ai-username')) {
       router.push('/');
     }
   }, [router]);
@@ -30,7 +30,7 @@ export default function LoginPage() {
 
   const handleContinue = () => {
     if (username.trim()) {
-      localStorage.setItem('muse-ai-username', username);
+      localStorage.setItem('scalpking-ai-username', username);
       router.push('/');
     }
   };
@@ -40,7 +40,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold font-headline bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Welcome to Muse AI
+            Welcome to SCALPKING AI
           </CardTitle>
           <CardDescription className="text-muted-foreground pt-2">
             الرجاء إدخال اسم مستخدم والانضمام إلى قناة التليجرام للمتابعة.
