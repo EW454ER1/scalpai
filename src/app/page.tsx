@@ -1,9 +1,35 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { ImageGenerator } from '@/components/image-generator';
 import { SongGenerator } from '@/components/song-generator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Music, ImageIcon } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const username = localStorage.getItem('muse-ai-username');
+    if (!username) {
+      router.push('/login');
+    }
+  }, [router]);
+  
+  if (typeof window !== 'undefined' && !localStorage.getItem('muse-ai-username')) {
+    return (
+        <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12 lg:p-24 bg-background text-foreground">
+            <div className="w-full max-w-4xl mx-auto space-y-8">
+                <Skeleton className="h-16 w-1/2 mx-auto" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-64 w-full" />
+            </div>
+      </div>
+    );
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12 lg:p-24 bg-background text-foreground">
       <div className="w-full max-w-4xl mx-auto">
