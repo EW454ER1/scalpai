@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ImageGenerator } from '@/components/image-generator';
 import { TextToSpeechGenerator } from '@/components/text-to-speech-generator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ImageIcon, Send, Speech, Gift, Copy, Share2, Upload, Download } from 'lucide-react';
+import { ImageIcon, Send, Speech, Gift, Copy, Share2, Upload, Download, LogOut } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -63,6 +63,12 @@ export default function Home() {
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('scalpking-ai-username');
+    localStorage.removeItem('gemini-api-key');
+    router.push('/login');
+  };
+
   const handleWithdrawClick = () => {
     if (balance < minWithdrawal) {
       toast({
@@ -94,6 +100,10 @@ export default function Home() {
                     SCALPKING AI
                  </h1>
                  <div className='hidden sm:flex items-center gap-2'>
+                    <Button variant="outline" onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        تسجيل الخروج
+                    </Button>
                     <Button variant="outline" onClick={handleShare}>
                         <Share2 className="mr-2 h-4 w-4" />
                         مشاركة
@@ -278,5 +288,3 @@ export default function Home() {
     </main>
   );
 }
-
-    
