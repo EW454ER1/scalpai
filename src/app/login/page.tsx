@@ -20,7 +20,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (localStorage.getItem('scalpking-ai-username') && localStorage.getItem('gemini-api-key')) {
-      router.push('/');
+      window.location.href = '/';
     }
   }, [router]);
 
@@ -49,7 +49,7 @@ export default function LoginPage() {
     if (username.trim() && apiKey.trim()) {
       localStorage.setItem('scalpking-ai-username', username);
       localStorage.setItem('gemini-api-key', apiKey);
-      router.push('/');
+      window.location.href = '/';
     }
   };
 
@@ -100,17 +100,17 @@ export default function LoginPage() {
           </div>
           
           {!hasClickedJoin && (
-            <a
-              href="https://t.me/gmt_apt"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={handleJoinClick}
+            <Button 
+              variant="outline" 
+              className="w-full text-lg py-6"
+              onClick={() => {
+                handleJoinClick();
+                window.open('https://t.me/gmt_apt', '_blank', 'noopener,noreferrer');
+              }}
             >
-              <Button variant="outline" className="w-full text-lg py-6">
-                <Send className="mr-2 h-5 w-5" />
-                الانضمام إلى قناة التليجرام
-              </Button>
-            </a>
+              <Send className="mr-2 h-5 w-5" />
+              الانضمام إلى قناة التليجرام
+            </Button>
           )}
 
           {hasClickedJoin && !hasConfirmedJoin && (

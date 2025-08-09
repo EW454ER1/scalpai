@@ -38,15 +38,15 @@ export default function Home() {
   const [balance, setBalance] = useState(0.00); 
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem('scalpking-ai-username');
-    const storedApiKey = localStorage.getItem('gemini-api-key');
-    if (!storedUsername || !storedApiKey) {
-      router.push('/login');
-    } else {
-      setUsername(storedUsername);
-    }
-    setIsClient(true);
-  }, [router]);
+  const storedUsername = localStorage.getItem('scalpking-ai-username');
+  const storedApiKey = localStorage.getItem('gemini-api-key');
+  if (!storedUsername || !storedApiKey) {
+    router.push('/login');
+  } else {
+    setUsername(storedUsername);
+  }
+  setIsClient(true);
+}, [router]);
   
   const copyToClipboard = (textToCopy: string, toastMessage: string) => {
     navigator.clipboard.writeText(textToCopy);
@@ -66,7 +66,7 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem('scalpking-ai-username');
     localStorage.removeItem('gemini-api-key');
-    router.push('/login');
+    window.location.href = '/login';
   };
 
   const handleWithdrawClick = () => {
