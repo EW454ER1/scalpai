@@ -41,12 +41,12 @@ export default function Home() {
   const storedUsername = localStorage.getItem('scalpking-ai-username');
   const storedApiKey = localStorage.getItem('gemini-api-key');
   if (!storedUsername || !storedApiKey) {
-    router.push('/login');
+    window.location.href = '/login';
   } else {
     setUsername(storedUsername);
   }
   setIsClient(true);
-}, [router]);
+}, []);
   
   const copyToClipboard = (textToCopy: string, toastMessage: string) => {
     navigator.clipboard.writeText(textToCopy);
