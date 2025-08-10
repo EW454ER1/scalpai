@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Send, LogIn, CheckCircle, KeyRound, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function LoginPage() {
+function LoginForm() {
   const [username, setUsername] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [hasClickedJoin, setHasClickedJoin] = useState(false);
@@ -22,10 +22,10 @@ export default function LoginPage() {
     if (localStorage.getItem('scalpking-ai-username') && localStorage.getItem('gemini-api-key')) {
       window.location.href = '/';
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
-    const ref = searchParams.get('ref');
+    const ref = searchParams?.get('ref');
     if (ref) {
       // You can store the referral information here.
       // For now, we just show a toast message.
@@ -138,6 +138,27 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-3xl font-bold font-headline bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              أهلاً بك في SCALPKING AI
+            </CardTitle>
+            <CardDescription className="text-muted-foreground pt-2">
+              جاري التحميل...
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </main>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }
 
