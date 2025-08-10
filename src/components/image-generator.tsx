@@ -61,6 +61,11 @@ export function ImageGenerator() {
     setIsLoading(true);
     setGeneratedImages([]);
     try {
+      // Check if API key is available in localStorage for client-side
+      const apiKey = localStorage.getItem('gemini-api-key');
+      if (!apiKey) {
+        throw new Error('Google Gemini API key is not configured. Please add your API key in the login page.');
+      }
       const result = await generateImages(data as GenerateImagesInput);
       setGeneratedImages(result.images);
     } catch (error) {
