@@ -33,7 +33,6 @@ const nextConfig = {
       '@radix-ui/react-toast',
       '@radix-ui/react-tooltip',
     ],
-    missingSuspenseWithCSRBailout: false,
   },
   
   // Optimize webpack configuration
@@ -79,12 +78,16 @@ const nextConfig = {
   // Optimize compression
   compress: true,
   
-  // Enable swc minification for faster builds
-  swcMinify: true,
+
   
   // Environment variables optimization
   env: {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://scalpai.netlify.app',
+  },
+  
+  // Configure Turbopack for better performance
+  turbopack: {
+    resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.json'],
   },
 }; 
 
