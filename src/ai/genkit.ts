@@ -1,8 +1,8 @@
-import {genkit, type GenkitConfig} from 'genkit';
+import {genkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 
 // This is a client-only file.
-let config: GenkitConfig;
+let config: Parameters<typeof genkit>[0];
 if (typeof window !== 'undefined') {
   const apiKey = localStorage.getItem('gemini-api-key') || undefined;
   config = {
